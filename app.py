@@ -109,6 +109,8 @@ def reqister():
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация', form=form,
                                    message="Такой пользователь уже есть")
+        if form.email == form.password:
+            return redirect('/')
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -127,6 +129,8 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if form.password == form.email:
+            return redirect('/')
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
