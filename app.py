@@ -40,7 +40,7 @@ def main():
 @login_required
 def news_delete(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id, News.user == current_user).first()
+    news = db_sess.query(News).filter(News.id == id, (News.user == current_user or current_user.id == 1)).first()
     if news:
         db_sess.delete(news)
         db_sess.commit()
@@ -112,7 +112,7 @@ def edit_job(id):
 @login_required
 def job_delete(id):
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).filter(Jobs.id == id, Jobs.user == current_user).first()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == id, (Jobs.user == current_user or current_user.id == 1)).first()
     if jobs:
         db_sess.delete(jobs)
         db_sess.commit()
@@ -126,10 +126,10 @@ def index():
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
-        jobs = db_sess.query(Jobs).filter((Jobs.user == current_user) | (Jobs.finished != False))
+        jobs = db_sess.query(Jobs).filter((Jobs.user == current_user) | (Jobs.finished != True))
     else:
         news = db_sess.query(News).filter(News.is_private != True)
-        jobs = db_sess.query(Jobs).filter(Jobs.finished != False)
+        jobs = db_sess.query(Jobs).filter(Jobs.finished != True)
     return render_template("index.html", news=news, jobs=jobs)
 
 
