@@ -1,4 +1,0 @@
-sqlalchemy
-wtforms
-flask
-werkzeug
